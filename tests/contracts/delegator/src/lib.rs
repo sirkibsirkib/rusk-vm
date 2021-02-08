@@ -22,6 +22,9 @@ pub struct Delegator;
 mod hosted {
     use super::*;
 
+    #[cfg(feature = "plonk-error")]
+    use dusk_plonk::prelude::Proof;
+
     use canonical::{BridgeStore, ByteSink, ByteSource, Canon, Id32, Store};
     use dusk_abi::{
         ContractId, ContractState, Query, ReturnValue, Transaction,
