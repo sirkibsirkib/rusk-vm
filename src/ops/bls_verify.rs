@@ -32,18 +32,18 @@ impl<S: Store> AbiCall<S> for BlsVerify {
             context.memory(|a| {
                 use dusk_bls12_381_sign::{Signature, APK};
                 let msg: &[u8] = {
-                    let msg_ofs = msg_off as usize;
-                    let msg_len = msg_len as usize;
-                    &a[msg_ofs..msg_ofs + msg_len]
+                    let msg_start = msg_off as usize;
+                    let msg_end = msg_start + msg_len as usize;
+                    &a[msg_start..msg_end]
                 };
                 let signature: Signature = {
                     const SIZE: usize = Signature::serialized_size();
                     let sig_start = sig as usize;
                     let sig_end = sig_start + SIZE;
                     let byte_slice = &a[sig_start..sig_end];
-                    let mut sig_bytes = [0; SIZE];
-                    sig_bytes.copy_from_slice(byte_slice);
-                    Signature::from_bytes(&sig_bytes)
+                    let mut bytes = [0; SIZE];
+                    bytes.copy_from_slice(byte_slice);
+                    Signature::from_bytes(&bytes)
                         .map_err(|_| VMError::InvalidArguments)?
                 };
                 let public_key: APK = {
@@ -51,9 +51,9 @@ impl<S: Store> AbiCall<S> for BlsVerify {
                     let pub_key_start = pub_key as usize;
                     let pub_key_end = pub_key_start + SIZE;
                     let byte_slice = &a[pub_key_start..pub_key_end];
-                    let mut sig_bytes = [0; SIZE];
-                    sig_bytes.copy_from_slice(byte_slice);
-                    APK::from_bytes(&sig_bytes)
+                    let mut bytes = [0; SIZE];
+                    bytes.copy_from_slice(byte_slice);
+                    APK::from_bytes(&bytes)
                         .map_err(|_| VMError::InvalidArguments)?
                 };
                 let ret = match public_key.verify(&signature, msg) {
