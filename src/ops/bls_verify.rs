@@ -26,7 +26,8 @@ impl<S: Store> AbiCall<S> for BlsVerify {
         context: &mut CallContext<S>,
         args: RuntimeArgs,
     ) -> Result<Option<RuntimeValue>, VMError<S>> {
-        if let [RuntimeValue::I32(sig), RuntimeValue::I32(pub_key), RuntimeValue::I32(msg_off), RuntimeValue::I32(msg_len)] =
+        use RuntimeValue as Rv;
+        if let [Rv::I32(sig), Rv::I32(pub_key), Rv::I32(msg_off), Rv::I32(msg_len)] =
             *args.as_ref()
         {
             context.memory(|a| {
