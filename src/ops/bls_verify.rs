@@ -56,11 +56,8 @@ impl<S: Store> AbiCall<S> for BlsVerify {
                     APK::from_bytes(&bytes)
                         .map_err(|_| VMError::InvalidArguments)?
                 };
-                let ret = match public_key.verify(&signature, msg) {
-                    Ok(()) => 1,
-                    Err(_) => 0,
-                };
-                Ok(Some(RuntimeValue::from(ret)))
+                let success = public_key.verify(&signature, msg).is_ok();
+                Ok(Some(RuntimeValue::from(if success { 1 } else { 0 })))
             })
         } else {
             Err(VMError::InvalidArguments)
