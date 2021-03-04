@@ -32,26 +32,27 @@ impl<S: Store> AbiCall<S> for BlsVerify {
         {
             context.memory(|a| {
                 use dusk_bls12_381_sign::{Signature, APK};
-                let msg: &[u8] = {
-                    let start = msg_off as usize;
-                    &a[start..start + msg_len as usize]
-                };
+                let get_a_slice =
+                    |start: usize, size: usize| &a[start..(start + size)];
+
+                let msg = get_a_slice(msg_off as usize, msg_len as usize);
+
                 let signature: Signature = {
                     const SIZE: usize = Signature::serialized_size();
-                    let start = sig as usize;
                     let mut bytes = [0; SIZE];
-                    bytes.copy_from_slice(&a[start..start + SIZE]);
+                    bytes.copy_from_slice(get_a_slice(sig as usize, SIZE));
                     Signature::from_bytes(&bytes)
                         .map_err(|_| VMError::InvalidArguments)?
                 };
+
                 let public_key: APK = {
                     const SIZE: usize = APK::serialized_size();
-                    let start = pub_key as usize;
                     let mut bytes = [0; SIZE];
-                    bytes.copy_from_slice(&a[start..start + SIZE]);
+                    bytes.copy_from_slice(get_a_slice(pub_key as usize, SIZE));
                     APK::from_bytes(&bytes)
                         .map_err(|_| VMError::InvalidArguments)?
                 };
+
                 let success = public_key.verify(&signature, msg).is_ok();
                 Ok(Some(RuntimeValue::from(if success { 1 } else { 0 })))
             })
