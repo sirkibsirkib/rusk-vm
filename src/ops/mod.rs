@@ -11,6 +11,7 @@ use canonical::Store;
 use wasmi::{RuntimeArgs, RuntimeValue, ValueType};
 
 pub mod block_height;
+pub mod bls_verify;
 pub mod callee;
 pub mod debug;
 pub mod gas;

@@ -20,6 +20,8 @@ canonical_host = "0.5"
 canonical_derive = "0.5"
 dusk-kelvin-map = "0.3"
 
+dusk-bls12_381-sign = { git="https://github.com/dusk-network/bls12_381-sign"}
+
 [dev-dependencies]
 dusk-bls12_381 = "0.6"
 dusk-bytes = "0.1"
